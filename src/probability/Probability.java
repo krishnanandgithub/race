@@ -1,20 +1,46 @@
 package probability;
 
+import java.util.Objects;
+
 public class Probability {
-    private final double favourableOutcomes;
-    private final double totalOutcomes;
+    private final double value;
 
-    public Probability(int favourableOutcomes, int totalOutcomes) {
-        this.favourableOutcomes = favourableOutcomes;
-        this.totalOutcomes = totalOutcomes;
+    private Probability(double value) {
+        this.value = value;
     }
 
+    public static Probability create(double value) throws Exception {
+        if (value < 0 || value > 1) {
+            throw new IllegalArgumentException("Invalid Probability");
+        }
 
-    public double getProbability() {
-        return favourableOutcomes / totalOutcomes;
+        return new Probability(value);
     }
 
-    public double getComplementProbability() {
-        return 1 - this.getProbability();
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Probability that = (Probability) o;
+        return Double.compare(value, that.value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
+    }
+
+    public Probability complement() throws Exception {
+        return  Probability.create(1 - this.value);
+    }
+
+    public Probability and(Probability probabilityB) {
+        return new Probability(this.value * probabilityB.value);
+    }
+
+    public Probability or(Probability probabilityB) throws Exception {
+        Probability complementB = probabilityB.complement();
+        Probability complementA = this.complement();
+
+        return (complementA.and(complementB)).complement();
     }
 }
