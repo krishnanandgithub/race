@@ -13,4 +13,8 @@ public class Probability {
     public double getProbability() {
         return favourableOutcomes / totalOutcomes;
     }
+
+    public double getComplementProbability() {
+        return 1 - this.getProbability();
+    }
 }
