@@ -15,8 +15,10 @@ public class Measurement {
         this.standard = standard;
     }
 
-    public static Measurement create(double value, Unit unit, HashMap<Unit, Double> stdUnitMultiplierMap) {
-        return new Measurement(value * stdUnitMultiplierMap.get(unit), value, unit);
+    public static Measurement create(double value, Unit unit, HashMap<Unit, Double> stdUnitMultiplierMap) throws UnitMismatchException {
+        Double factor = stdUnitMultiplierMap.get(unit);
+        if(factor == null) throw new UnitMismatchException(unit);
+        return new Measurement(value * factor, value, unit);
     }
 
     @Override
@@ -31,7 +33,10 @@ public class Measurement {
         return Objects.hashCode(standard);
     }
 
-    public Measurement add(Measurement measurement, HashMap<Unit, Double> stdUnitMultiplierMap,Unit expectedUnit) {
+    public Measurement add(Measurement measurement, HashMap<Unit, Double> stdUnitMultiplierMap,Unit expectedUnit) throws UnitMismatchException {
+        Double factor = stdUnitMultiplierMap.get(measurement.unit);
+        if(factor == null) throw new UnitMismatchException(measurement.unit);
+
         double sumOfStandard = this.standard + measurement.standard;
         double sumInExpUnits = sumOfStandard / stdUnitMultiplierMap.get(expectedUnit);
 
